@@ -3,8 +3,10 @@ main = "src/bot.ts"
 compatibility_date = "2025-06-01"
 
 [vars]
-API_BASE_URL = "https://sentinelx.fly.dev"
-WEB_APP_URL = "https://sentinelx.fly.dev"
+# Change to your Railway app URL after deployment
+# Example: API_BASE_URL = "https://sentinelx.up.railway.app"
+API_BASE_URL = "https://YOUR_APP.up.railway.app"
+WEB_APP_URL = "https://YOUR_APP.up.railway.app"
 
 [env.dev]
 vars = { API_BASE_URL = "http://localhost:8000", WEB_APP_URL = "http://localhost:8000" }

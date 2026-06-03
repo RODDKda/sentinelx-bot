@@ -7,58 +7,65 @@ Security-Enhanced Polymarket Telegram Trading Bot — Minimal Viable Product.
 ### 1. Clone & Setup
 
 ```bash
+git clone <your-repo-url>
 cd sentinelx-mvp
 
 # Python backend
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-
-# Configuration
 cp .env.example .env
-# Edit .env: set ENCRYPTION_KEY, JWT_SECRET, TELEGRAM_BOT_TOKEN
+# Edit .env with your settings
 ```
 
-### 2. Run Backend
+### 2. Run Locally
 
 ```bash
 uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
+Open http://localhost:8000
 
-Verify: `curl http://localhost:8000/health` → `{"status":"ok","version":"0.1.0"}`
+### 3. Deploy to Railway
 
-### 3. Run Telegram Bot
+```bash
+# 1. Install Railway CLI
+# https://docs.railway.app/guides/cli
+
+# 2. Login
+railway login
+
+# 3. Create new project
+railway init
+
+# 4. Set environment variables (Railway dashboard or CLI)
+railway variables set ENCRYPTION_KEY=$(python -c "import os; print(os.urandom(32).hex())")
+railway variables set TELEGRAM_BOT_TOKEN=your_bot_token
+railway variables set WEB_APP_URL=https://your-app.up.railway.app
+
+# 5. Deploy (Railway auto-detects Dockerfile)
+railway up
+
+# 6. Get your app URL
+railway domain
+```
+
+Railway auto-detects the Dockerfile and sets `$PORT` automatically.
+After deployment, update `bot/wrangler.toml` with your Railway URL.
+
+### 4. Deploy Telegram Bot
 
 ```bash
 cd bot
 npm install
-TELEGRAM_BOT_TOKEN=your_token npx tsx src/bot.ts
-```
-
-Commands: `/start /help /markets /web /ping`
-
-### 4. Deploy to fly.io
-
-```bash
-# Install flyctl: https://fly.io/docs/flyctl/install/
-fly auth signup
-fly launch
-fly volumes create sentinelx_data --size 1 --region hkg
-fly secrets set ENCRYPTION_KEY=$(python -c "import os; print(os.urandom(32).hex())")
-fly secrets set TELEGRAM_BOT_TOKEN=your_bot_token
-fly deploy
+# Edit wrangler.toml: set API_BASE_URL to your Railway URL
+npx wrangler deploy
 ```
 
 ## Architecture
 
 ```
-Telegram User → Bot (grammY) → API (FastAPI) → SQLite (encrypted keys)
-                  ↓ Cloudflare         ↓ fly.io         ↓ Persistent Volume
+Telegram User → Bot (grammY/CF Workers) → API (FastAPI/Railway) → SQLite
 ```
-
-- **Website** (fly.io): User management, wallet binding, dashboard
-- **Telegram Bot** (grammY + CF Workers): Command-line trading interface
-- **Database** (SQLite): Single file, AES-256-GCM encrypted private keys
 
 ## API Endpoints
 
@@ -67,30 +74,21 @@ Telegram User → Bot (grammY) → API (FastAPI) → SQLite (encrypted keys)
 | GET | `/health` | Health check |
 | GET | `/` | Home page |
 | GET | `/web/dashboard` | User dashboard |
-| GET | `/web/wallet/bind` | Wallet binding form |
-| POST | `/api/v1/auth/register` | Register user |
+| POST | `/api/v1/auth/register` | Register via Telegram |
 | POST | `/api/v1/wallet/bind` | Bind encrypted wallet |
-| POST | `/api/v1/bot/verify-code` | Generate web login code |
-| GET | `/api/v1/bot/verify-code/validate` | Validate login code |
+| GET | `/api/v1/markets/active` | Active markets |
+| POST | `/api/v1/trades/buy` | Place buy order |
+| POST | `/api/v1/trades/sell` | Place sell order |
+| POST | `/api/v1/copy/start` | Start copy trading |
+| GET | `/api/v1/security/market/{slug}` | Market safety score |
+| GET | `/api/v1/settings/calculate` | Fee calculation |
 
 ## Security
 
-- Private keys encrypted with AES-256-GCM at rest
-- HKDF-SHA256 key derivation from master encryption key
-- User ID as AAD binds ciphertext to specific user
-- Master key stored via fly.io secrets (never in code)
-- Private keys only decrypted in memory during transaction signing
-
-## Cost
-
-| Resource | Monthly |
-|----------|---------|
-| fly.io VM (256MB) | $2.02 |
-| fly.io Volume (1GB) | $0.15 |
-| Cloudflare Workers | Free (10M req) |
-| **Total** | **~$2.17** |
-
-First 2 months free with $5 signup credit.
+- AES-256-GCM encrypted private keys at rest
+- HKDF-SHA256 key derivation
+- User ID as AAD (binds ciphertext to user)
+- Master key via Railway variables (never in code)
 
 ## License
 

@@ -45,5 +45,9 @@ class Settings:
     # Web
     WEB_APP_URL: str = os.getenv("WEB_APP_URL", "http://localhost:8000")
 
+    # Deployment (Railway sets PORT automatically)
+    PORT: int = int(os.getenv("PORT", "8000"))
+    HOST: str = os.getenv("HOST", "0.0.0.0")
+
 
 settings = Settings()
