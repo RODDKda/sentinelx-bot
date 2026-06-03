@@ -11,5 +11,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 RUN mkdir -p /app/data
 
-# Railway injects PORT; use it directly via Python
-CMD ["python", "-c", "import os,uvicorn; p=int(os.environ.get('PORT','8000')); print(f'Binding to 0.0.0.0:{p}'); uvicorn.run('app.main:app',host='0.0.0.0',port=p)"]
+# Railway uses port 8080
+EXPOSE 8080
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
