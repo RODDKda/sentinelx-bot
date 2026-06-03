@@ -18,26 +18,30 @@ jinja_env = Environment(loader=FileSystemLoader(str(templates_dir)))
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan: startup and shutdown events."""
-    print(f"[SentinelX] Starting {settings.APP_NAME} v{settings.APP_VERSION}")
-    print(f"[SentinelX] Debug mode: {settings.DEBUG}")
+    import sys, traceback
+    print(f"[SentinelX] Starting {settings.APP_NAME} v{settings.APP_VERSION}", flush=True)
+    print(f"[SentinelX] Debug mode: {settings.DEBUG}", flush=True)
 
-    # Ensure data directory exists
-    data_dir = Path(__file__).parent.parent / "data"
-    data_dir.mkdir(exist_ok=True)
+    try:
+        data_dir = Path(__file__).parent.parent / "data"
+        data_dir.mkdir(exist_ok=True)
 
-    # Initialize database tables
-    from app.core.database import init_db
-    await init_db()
+        from app.core.database import init_db
+        await init_db()
+        print("[SentinelX] Database initialized", flush=True)
 
-    # Start market data feed (simulated WebSocket)
-    from app.engine.data_feed import data_feed
-    data_feed.start()
+        from app.engine.data_feed import data_feed
+        data_feed.start()
+        print("[SentinelX] DataFeed started", flush=True)
+    except Exception as e:
+        print(f"[SentinelX] STARTUP ERROR: {e}", flush=True)
+        traceback.print_exc(file=sys.stderr)
+        raise
 
-    yield  # Application runs here
+    yield
 
-    # Cleanup
     data_feed.stop()
-    print("[SentinelX] Shutting down...")
+    print("[SentinelX] Shutting down...", flush=True)
 
 
 app = FastAPI(
