@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ app_name }}</h2>
+<p>Security-Enhanced Polymarket Trading Bot</p>
+
+<article>
+    <table>
+        <tr><td><strong>Version</strong></td><td>{{ version }}</td></tr>
+        <tr><td><strong>Status</strong></td><td><span style="color:green">Online</span></td></tr>
+    </table>
+</article>
+
+<p>Get started by managing your wallets and trading via Telegram.</p>
+<p><a href="/web/wallet/bind" role="button">Bind Wallet</a></p>
+{% endblock %}

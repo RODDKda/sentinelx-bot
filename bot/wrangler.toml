@@ -1,0 +1,10 @@
+name = "sentinelx-bot"
+main = "src/bot.ts"
+compatibility_date = "2025-06-01"
+
+[vars]
+API_BASE_URL = "https://sentinelx.fly.dev"
+WEB_APP_URL = "https://sentinelx.fly.dev"
+
+[env.dev]
+vars = { API_BASE_URL = "http://localhost:8000", WEB_APP_URL = "http://localhost:8000" }

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Dashboard</h2>
+
+{% if wallet %}
+<article>
+    <header><strong>Wallet Status</strong></header>
+    <table>
+        <tr><td>Address</td><td><code>{{ wallet_address }}</code></td></tr>
+        <tr><td>Label</td><td>{{ wallet_label }}</td></tr>
+        <tr><td>USDC Balance</td><td>${{ "%.2f"|format(usdc_balance) }}</td></tr>
+        <tr><td>POL Balance</td><td>{{ "%.4f"|format(matic_balance) }}</td></tr>
+    </table>
+</article>
+{% else %}
+<article>
+    <p>No wallet bound yet.</p>
+    <a href="/web/wallet/bind" role="button">Bind a Wallet</a>
+</article>
+{% endif %}
+
+<article>
+    <header><strong>Trading Stats</strong></header>
+    <table>
+        <tr><td>Total Trades</td><td>{{ total_trades }}</td></tr>
+        <tr><td>Total PnL</td><td>${{ "%.2f"|format(total_pnl) }}</td></tr>
+        <tr><td>Win Rate</td><td>{{ "%.0f"|format(win_rate) }}%</td></tr>
+    </table>
+</article>
+{% endblock %}

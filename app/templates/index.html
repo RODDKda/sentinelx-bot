@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+</head>
+<body>
+    <main class="container">
+        <header style="text-align: center; padding: 3rem 0;">
+            <h1>🛡️ {{ title }}</h1>
+            <p>Polymarket Telegram Trading Bot</p>
+            <p><small>Version {{ version }}</small></p>
+        </header>
+        <section style="text-align: center;">
+            <p>
+                <span style="display: inline-block; width: 12px; height: 12px; background: #4caf50; border-radius: 50%; margin-right: 6px;"></span>
+                System Operational
+            </p>
+            <nav style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                <a href="/web/dashboard" role="button">Dashboard</a>
+                <a href="/web/wallet/bind" role="button" class="secondary">Bind Wallet</a>
+                <a href="/health" role="button" class="outline">Health Check</a>
+            </nav>
+        </section>
+        <footer style="text-align: center; margin-top: 3rem; opacity: 0.6;">
+            <small>SentinelX MVP &copy; 2025</small>
+        </footer>
+    </main>
+</body>
+</html>

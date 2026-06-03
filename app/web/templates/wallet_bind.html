@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Bind Wallet</h2>
+<p class="secondary">Your private key is encrypted with AES-256-GCM and never stored in plain text.</p>
+
+<form hx-post="/api/v1/wallet/bind" hx-target="#result" hx-swap="innerHTML">
+    <label>
+        Wallet Label
+        <input type="text" name="label" placeholder="My Trading Wallet" required>
+    </label>
+    <label>
+        Private Key
+        <input type="password" name="private_key" placeholder="0x..." autocomplete="off" required>
+    </label>
+    <div class="warning-box">
+        <strong>Security Notice:</strong> Your private key is encrypted in transit (HTTPS) and at rest
+        (AES-256-GCM). It is only decrypted in memory during transaction signing and immediately
+        cleared afterwards. SentinelX never has plaintext access to your funds.
+    </div>
+    <button type="submit">Bind Wallet</button>
+</form>
+
+<div id="result"></div>
+{% endblock %}
